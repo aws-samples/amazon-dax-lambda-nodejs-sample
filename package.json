@@ -1,0 +1,16 @@
+{
+  "name": "geturljs",
+  "version": "1.0.0",
+  "repository": "https://github.com/aws-samples/amazon-dax-lambda-nodejs-sample",
+  "description": "Amazon DynamoDB Accelerator (DAX) Lambda Node.js Sample",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "hardyj@amazon.com",
+  "license": "MIT",
+  "dependencies": {
+    "amazon-dax-client": "file:/Users/hardyj/workplace/DaxClients/src/DaxJSClient/amazon-dax-client-1.1.0.tgz",
+    "aws-sdk": "^2.207.0"
+  }
+}
