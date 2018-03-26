@@ -27,7 +27,7 @@ Resources:
           - AmazonDynamoDBFullAccess
           - AWSLambdaVPCAccessExecutionRole
       Runtime: nodejs6.10
-      Timeout: 10
+      Timeout: 1
       VpcConfig:
         SecurityGroupIds: 
             - !GetAtt getUrlSecurityGroup.GroupId
