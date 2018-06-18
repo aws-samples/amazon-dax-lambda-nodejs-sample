@@ -10,7 +10,7 @@
   "author": "hardyj@amazon.com",
   "license": "MIT",
   "dependencies": {
-    "amazon-dax-client": "file:/Users/hardyj/workplace/DaxClients/src/DaxJSClient/amazon-dax-client-1.1.0.tgz",
+    "amazon-dax-client": "^1.1.0",
     "aws-sdk": "^2.207.0"
   }
 }
