@@ -45,9 +45,7 @@ Resources:
         -
           AttributeName: id
           KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 100
-        WriteCapacityUnits: 10
+      BillingMode: PAY_PER_REQUEST
 
   getUrlCluster:
     Type: AWS::DAX::Cluster
