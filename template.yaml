@@ -26,10 +26,10 @@ Resources:
       Policies:
           - AmazonDynamoDBFullAccess
           - AWSLambdaVPCAccessExecutionRole
-      Runtime: nodejs6.10
+      Runtime: nodejs12.x
       Timeout: 10
       VpcConfig:
-        SecurityGroupIds: 
+        SecurityGroupIds:
             - !GetAtt getUrlSecurityGroup.GroupId
         SubnetIds:
             - !Ref getUrlSubnet
@@ -39,17 +39,17 @@ Resources:
     Properties:
       TableName: GetUrl-sample
       AttributeDefinitions:
-        - 
+        -
           AttributeName: id
           AttributeType: S
       KeySchema:
-        - 
+        -
           AttributeName: id
           KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 100
         WriteCapacityUnits: 10
-  
+
   getUrlCluster:
     Type: AWS::DAX::Cluster
     Properties:
@@ -74,17 +74,29 @@ Resources:
               Service:
               - dax.amazonaws.com
         Version: '2012-10-17'
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
       RoleName: getUrl-sample-Role
-  
+      Policies:
+        -
+          PolicyName: DAXAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Resource: '*'
+                Action:
+                - 'dax:PutItem'
+                - 'dax:GetItem'
+                - 'dynamodb:DescribeTable'
+                - 'dynamodb:GetItem'
+                - 'dynamodb:PutItem'
+
   getUrlSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for GetUrl
       GroupName: getUrl-sample
       VpcId: !Ref getUrlVpc
-  
+
   getUrlSecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
     DependsOn: getUrlSecurityGroup
@@ -94,7 +106,7 @@ Resources:
       FromPort: 8111
       ToPort: 8111
       SourceSecurityGroupId: !GetAtt getUrlSecurityGroup.GroupId
-  
+
   getUrlVpc:
     Type: AWS::EC2::VPC
     Properties:
@@ -118,11 +130,11 @@ Resources:
         - Key: Name
           Value: getUrl-sample
       VpcId: !Ref getUrlVpc
-  
+
   getUrlSubnetGroup:
     Type: AWS::DAX::SubnetGroup
     Properties:
       Description: Subnet group for GetUrl Sample
       SubnetGroupName: getUrl-sample
-      SubnetIds: 
+      SubnetIds:
         - !Ref getUrlSubnet
