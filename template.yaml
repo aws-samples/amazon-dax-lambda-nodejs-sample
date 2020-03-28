@@ -13,18 +13,17 @@ Resources:
           DDB_TABLE: !Ref getUrlTable
       Events:
         getUrl:
-          Type: Api
+          Type: HTTP
           Properties:
             Method: get
             Path: /{id+}
         postUrl:
-          Type: Api
+          Type: HTTP
           Properties:
             Method: post
             Path: /
       Handler: lambda/index.handler
       Policies:
-          - AmazonDynamoDBFullAccess
           - AWSLambdaVPCAccessExecutionRole
       Runtime: nodejs12.x
       Timeout: 10
@@ -138,3 +137,12 @@ Resources:
       SubnetGroupName: getUrl-sample
       SubnetIds:
         - !Ref getUrlSubnet
+
+Deployment:
+  Type: 'AWS::ApiGatewayV2::Deployment'
+  DependsOn:
+    - MyRoute
+  Properties:
+    Description: My deployment
+    ApiId: !Ref MyApi
+    StageName: Prod
