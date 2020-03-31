@@ -26,8 +26,7 @@ Now we can create the CloudFormation package and deploy it:
 
 One the CloudFormation stack is created, determine the insternal endpoint name (macOS/Linux/WSL):
 
-    gwId=$(aws apigateway get-rest-apis --query "items[?name == 'amazon-dax-lambda-nodejs-sample'].id | [0]" --output text)
-    endpointUrl="https://$gwId.execute-api.region.amazonaws.com/Prod"
+    endpointUrl=$(aws apigatewayv2 get-apis --query "Items[?Name == 'amazon-dax-lambda-nodejs-sample'].ApiEndpoint" --output text)
 
 To shorten a URL:
 
