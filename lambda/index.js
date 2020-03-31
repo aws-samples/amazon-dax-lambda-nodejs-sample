@@ -13,7 +13,7 @@ PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIG
 HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/ 
+*/
 
 const AWS = require('aws-sdk');
 const AmaxonDaxClient = require('amazon-dax-client');
@@ -28,9 +28,9 @@ exports.handler = function(event, context, callback) {
 };
 
 function main(event, context, callback) {
-  // Initialize the 'dynamodb' variable if it has not already been done. This 
-  // allows the initialization to be shared between Lambda runs to reduce 
-  // execution time. This will be re-run if Lambda has to recycle the container 
+  // Initialize the 'dynamodb' variable if it has not already been done. This
+  // allows the initialization to be shared between Lambda runs to reduce
+  // execution time. This will be re-run if Lambda has to recycle the container
   // or use a new instance.
   if(!dynamodb) {
     if(process.env.DAX_ENDPOINT) {
@@ -49,12 +49,26 @@ function main(event, context, callback) {
     }
   }
 
+  let body = event.body;
+  //console.log ('event.isBase64Encoded is set to ', event.isBase64Encoded);
+
   // Depending on the HTTP Method, save or return the URL
-  if (event.httpMethod == 'GET') {
+  if (event.requestContext.http.method == 'GET') {
     return getUrl(event.pathParameters.id, callback);
-  } else if (event.httpMethod == 'POST' && event.body) {
-    return setUrl(event.body, callback);
+  } else if (event.requestContext.http.method == 'POST' && event.body) {
+
+    // if base64 encoded event.body is sent in, decode it
+    if (event.isBase64Encoded) {
+      //console.log ('event.body is base64 encoded. Decoding it.');
+      let buff = Buffer.from(body, 'base64');
+      body = buff.toString('utf-8');
+    }
+
+    //console.log ('Setting body to ', body);
+
+    return setUrl(body, callback);
   } else {
+    console.log ('HTTP method ', event.requestContext.http.method, ' is invalid.');
     return done(400, JSON.stringify({error: 'Missing or invalid HTTP Method'}), 'application/json', callback);
   }
 }
@@ -65,7 +79,7 @@ function getUrl(id, callback) {
     TableName: process.env.DDB_TABLE,
     Key: { id: { S: id } }
   };
-  
+
   console.log('Fetching URL for', id);
   dynamodb.getItem(params, (err, data) => {
     if(err) {
@@ -85,12 +99,12 @@ function getUrl(id, callback) {
 /**
  * Compute a unique ID for each URL.
  *
- * To do this, take the MD5 hash of the URL, extract the first 40 bits, and 
+ * To do this, take the MD5 hash of the URL, extract the first 40 bits, and
  * then return that in base32 representation.
  *
  * If the salt is provided, prepend that to the URL first. This is used to
  * resolve hash collisions.
- * 
+ *
  */
 function computeId(url, salt) {
   if(salt) {

@@ -13,18 +13,16 @@ Resources:
           DDB_TABLE: !Ref getUrlTable
       Events:
         getUrl:
-          Type: HTTP
+          Type: HttpApi
           Properties:
             Method: get
             Path: /{id+}
         postUrl:
-          Type: HTTP
+          Type: HttpApi
           Properties:
             Method: post
             Path: /
       Handler: lambda/index.handler
-      Policies:
-          - AWSLambdaVPCAccessExecutionRole
       Runtime: nodejs12.x
       Timeout: 10
       VpcConfig:
@@ -32,6 +30,7 @@ Resources:
             - !GetAtt getUrlSecurityGroup.GroupId
         SubnetIds:
             - !Ref getUrlSubnet
+      Role: !GetAtt getUrlRole.Arn
 
   getUrlTable:
     Type: AWS::DynamoDB::Table
@@ -59,7 +58,7 @@ Resources:
         - !GetAtt getUrlSecurityGroup.GroupId
       SubnetGroupName: !Ref getUrlSubnetGroup
 
-  getUrlRole:
+  getServerlessRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -71,10 +70,10 @@ Resources:
               Service:
               - dax.amazonaws.com
         Version: '2012-10-17'
-      RoleName: getUrl-sample-Role
+      RoleName: getServerless-sample-Role
       Policies:
         -
-          PolicyName: DAXAccess
+          PolicyName: DAXLambdaAccess
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -86,6 +85,37 @@ Resources:
                 - 'dynamodb:DescribeTable'
                 - 'dynamodb:GetItem'
                 - 'dynamodb:PutItem'
+
+  getUrlRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+              - dax.amazonaws.com
+              - lambda.amazonaws.com
+        Version: '2012-10-17'
+      RoleName: getUrl-sample-Role
+      Policies:
+        -
+          PolicyName: DAXLAPIGAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Resource: '*'
+                Action:
+                - 'dax:PutItem'
+                - 'dax:GetItem'
+                - 'dynamodb:DescribeTable'
+                - 'dynamodb:GetItem'
+                - 'dynamodb:PutItem'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
 
   getUrlSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -135,12 +165,3 @@ Resources:
       SubnetGroupName: getUrl-sample
       SubnetIds:
         - !Ref getUrlSubnet
-
-Deployment:
-  Type: 'AWS::ApiGatewayV2::Deployment'
-  DependsOn:
-    - MyRoute
-  Properties:
-    Description: My deployment
-    ApiId: !Ref MyApi
-    StageName: Prod
