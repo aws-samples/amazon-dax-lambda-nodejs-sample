@@ -15,13 +15,13 @@ Then, create a zip file called geturl.zip containing the `lambda` and `node_modu
 
 Otherwise, put the necessary folders in a zip file.
 
-CloudFormation needs the code & template to be stored in an S3 bucket (replace bucket-name with something unique):
+CloudFormation needs the code & template to be stored in an S3 bucket (replace <your-bucket-name> with something unique and remember it as you will need it when packaging and deploying):
 
-    aws s3 mb s3://bucket-name
+    aws s3 mb s3://<your-bucket-name>
 
 Now we can create the CloudFormation package and deploy it:
 
-    aws cloudformation package --template-file template.yaml --output-template-file packaged-template.yaml --s3-bucket bucket-name
+    aws cloudformation package --template-file template.yaml --output-template-file packaged-template.yaml --s3-bucket <your-bucket-name>
     aws cloudformation deploy --template-file packaged-template.yaml --capabilities CAPABILITY_NAMED_IAM --stack-name amazon-dax-lambda-nodejs-sample
 
 One the CloudFormation stack is created, determine the insternal endpoint name (macOS/Linux/WSL):

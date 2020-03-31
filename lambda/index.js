@@ -50,8 +50,7 @@ function main(event, context, callback) {
   }
 
   let body = event.body;
-  //console.log ('event.isBase64Encoded is set to ', event.isBase64Encoded);
-
+  
   // Depending on the HTTP Method, save or return the URL
   if (event.requestContext.http.method == 'GET') {
     return getUrl(event.pathParameters.id, callback);
@@ -59,12 +58,9 @@ function main(event, context, callback) {
 
     // if base64 encoded event.body is sent in, decode it
     if (event.isBase64Encoded) {
-      //console.log ('event.body is base64 encoded. Decoding it.');
       let buff = Buffer.from(body, 'base64');
       body = buff.toString('utf-8');
     }
-
-    //console.log ('Setting body to ', body);
 
     return setUrl(body, callback);
   } else {
