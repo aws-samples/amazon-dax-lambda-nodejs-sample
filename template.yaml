@@ -58,34 +58,6 @@ Resources:
         - !GetAtt getUrlSecurityGroup.GroupId
       SubnetGroupName: !Ref getUrlSubnetGroup
 
-  getServerlessRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Action:
-            - sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service:
-              - dax.amazonaws.com
-        Version: '2012-10-17'
-      RoleName: getServerless-sample-Role
-      Policies:
-        -
-          PolicyName: DAXLambdaAccess
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Resource: '*'
-                Action:
-                - 'dax:PutItem'
-                - 'dax:GetItem'
-                - 'dynamodb:DescribeTable'
-                - 'dynamodb:GetItem'
-                - 'dynamodb:PutItem'
-
   getUrlRole:
     Type: AWS::IAM::Role
     Properties:
@@ -102,7 +74,7 @@ Resources:
       RoleName: getUrl-sample-Role
       Policies:
         -
-          PolicyName: DAXLAPIGAccess
+          PolicyName: DAXAccess
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
