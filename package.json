@@ -7,7 +7,7 @@
   "scripts": {
     "test": "test"
   },
-  "author": "jhardy@amazon.com",
+  "author": "author@example.com",
   "license": "MIT",
   "dependencies": {
     "amazon-dax-client": "^1.1.0",
