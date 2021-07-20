@@ -16,7 +16,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 const AWS = require('aws-sdk');
-const AmaxonDaxClient = require('amazon-dax-client');
+const AmazonDaxClient = require('amazon-dax-client');
 const crypto = require('crypto');
 
 // Store this at file level so that it is preserved between Lambda executions
@@ -35,7 +35,7 @@ function main(event, context, callback) {
   if(!dynamodb) {
     if(process.env.DAX_ENDPOINT) {
       console.log('Using DAX endpoint', process.env.DAX_ENDPOINT);
-      dynamodb = new AmaxonDaxClient({endpoints: [process.env.DAX_ENDPOINT]});
+      dynamodb = new AmazonDaxClient({endpoints: [process.env.DAX_ENDPOINT]});
     } else {
       // DDB_LOCAL can be set if using lambda-local with dynamodb-local or another local
       // testing envionment
